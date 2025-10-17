@@ -120,8 +120,13 @@ class ChatApp {
         document.getElementById('attachFileBtn').addEventListener('click', () => this.handleFileAttachment());
         document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileSelect(e));
         
-        // Chat header for agent switch
-        document.getElementById('chatHeader').addEventListener('click', () => this.startAgentSwitch());
+        // Chat header for agent switch (exceto quando clicar no model selector)
+        document.getElementById('chatHeader').addEventListener('click', (e) => {
+            // Não abrir modal se o clique for no seletor de modelo ou em seus elementos filhos
+            if (!e.target.closest('.model-selector-wrapper')) {
+                this.startAgentSwitch();
+            }
+        });
         
         // Modal de seleção de agente
         document.getElementById('continueToAgents').addEventListener('click', () => this.showAgentSelection());
@@ -202,6 +207,27 @@ class ChatApp {
                 if (document.getElementById('modelDropdown').classList.contains('active')) {
                     this.closeModelDropdown();
                 }
+                if (document.getElementById('userDropdown').classList.contains('active')) {
+                    this.closeUserDropdown();
+                }
+            }
+        });
+        
+        // User profile dropdown
+        document.getElementById('userInfo').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleUserDropdown();
+        });
+        
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            this.handleLogout();
+        });
+        
+        // Close user dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#userProfile')) {
+                this.closeUserDropdown();
             }
         });
     }
@@ -1327,6 +1353,70 @@ class ChatApp {
             } catch (error) {
                 console.error('Erro ao carregar agentes:', error);
             }
+        }
+    }
+    
+    // ===== FUNCIONALIDADES DO USUÁRIO =====
+    toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const isOpen = dropdown.classList.contains('active');
+        
+        if (isOpen) {
+            this.closeUserDropdown();
+        } else {
+            this.openUserDropdown();
+        }
+    }
+    
+    openUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.classList.add('active');
+        
+        // Adicionar overlay para fechar ao clicar fora
+        if (!document.querySelector('.user-dropdown-overlay')) {
+            const overlay = document.createElement('div');
+            overlay.className = 'user-dropdown-overlay';
+            overlay.addEventListener('click', () => this.closeUserDropdown());
+            document.body.appendChild(overlay);
+        }
+        
+        setTimeout(() => {
+            document.querySelector('.user-dropdown-overlay')?.classList.add('active');
+        }, 10);
+    }
+    
+    closeUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const overlay = document.querySelector('.user-dropdown-overlay');
+        
+        dropdown.classList.remove('active');
+        overlay?.classList.remove('active');
+        
+        // Remover overlay após a animação
+        setTimeout(() => {
+            overlay?.remove();
+        }, 300);
+    }
+    
+    handleLogout() {
+        // Fechar dropdown
+        this.closeUserDropdown();
+        
+        // Mostrar confirmação
+        if (confirm('Tem certeza que deseja sair?')) {
+            // Limpar dados do usuário
+            localStorage.removeItem('userSession');
+            localStorage.removeItem('chats');
+            localStorage.removeItem('agents');
+            
+            // Mostrar notificação
+            this.showNotification('Desconectado com sucesso!', 'success');
+            
+            // Simular redirecionamento (em uma app real, redirecionaria para login)
+            setTimeout(() => {
+                // Recarregar a página para resetar tudo
+                window.location.reload();
+            }, 1500);
         }
     }
     
