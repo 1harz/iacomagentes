@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Chat Agents</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Coluna Esquerda - Histórico de Conversas -->
+        <aside class="sidebar sidebar-left" id="sidebarLeft">
+            <div class="sidebar-header">
+                <h2>Conversas</h2>
+                <div class="sidebar-actions">
+                    <button class="theme-toggle" id="themeToggle" title="Alternar tema">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="collapse-btn" id="collapseLeft" title="Recolher">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chat-history" id="chatHistory">
+                <div class="chat-item active" data-chat-id="1">
+                    <div class="chat-content">
+                        <i class="fas fa-message"></i>
+                        <span class="chat-title">Nova conversa</span>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="action-btn" title="Renomear">
+                            <i class="fas fa-pencil"></i>
+                        </button>
+                        <button class="action-btn" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Área Central - Chat -->
+        <main class="chat-area" id="chatArea">
+            <div class="chat-header" id="chatHeader">
+                <div class="agent-info">
+                    <div class="agent-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="agent-details">
+                        <h3 id="currentAgentName">Assistente IA</h3>
+                        <span class="agent-status">Online</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="model-selector-wrapper">
+                        <button class="model-selector" id="modelSelector">
+                            <span id="selectedModelName">Gemini Pro</span>
+                        </button>
+                        
+                        <div class="model-dropdown" id="modelDropdown">
+                            <div class="model-dropdown-header">
+                                <div class="model-dropdown-title">
+                                    <i class="fas fa-brain"></i>
+                                    Escolher Modelo de IA
+                                </div>
+                                <div class="model-dropdown-subtitle">Selecione o modelo ideal para sua conversa</div>
+                            </div>
+                            
+                            <div class="model-dropdown-search">
+                                <div class="model-search-wrapper">
+                                    <i class="fas fa-search"></i>
+                                    <input type="text" class="model-search-input" id="modelSearchInput" placeholder="Buscar modelos...">
+                                </div>
+                            </div>
+                            
+                            <div class="model-dropdown-list" id="modelDropdownList">
+                                <div class="model-option selected" data-model="gemini-pro">
+                                    <div style="display: flex; align-items: center; flex: 1;">
+                                        <div class="model-option-icon gemini">
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <div class="model-option-info">
+                                            <div class="model-option-name">
+                                                Gemini Pro
+                                                <span class="model-option-badge recommended">Recomendado</span>
+                                            </div>
+                                            <div class="model-option-description">Modelo versátil e rápido do Google</div>
+                                        </div>
+                                    </div>
+                                    <div class="model-option-meta">
+                                        <div class="model-option-status">
+                                            <span class="status-indicator"></span>
+                                            Online
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="model-option" data-model="gpt-4-turbo">
+                                    <div style="display: flex; align-items: center; flex: 1;">
+                                        <div class="model-option-icon gpt">
+                                            <i class="fas fa-robot"></i>
+                                        </div>
+                                        <div class="model-option-info">
+                                            <div class="model-option-name">
+                                                GPT-4 Turbo
+                                                <span class="model-option-badge gpt">GPT</span>
+                                            </div>
+                                            <div class="model-option-description">Modelo avançado da OpenAI</div>
+                                        </div>
+                                    </div>
+                                    <div class="model-option-meta">
+                                        <div class="model-option-status">
+                                            <span class="status-indicator slow"></span>
+                                            Lento
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="model-option" data-model="claude-3-sonnet">
+                                    <div style="display: flex; align-items: center; flex: 1;">
+                                        <div class="model-option-icon claude">
+                                            <i class="fas fa-comments"></i>
+                                        </div>
+                                        <div class="model-option-info">
+                                            <div class="model-option-name">
+                                                Claude 3 Sonnet
+                                                <span class="model-option-badge claude">Claude</span>
+                                            </div>
+                                            <div class="model-option-description">Modelo equilibrado da Anthropic</div>
+                                        </div>
+                                    </div>
+                                    <div class="model-option-meta">
+                                        <div class="model-option-status">
+                                            <span class="status-indicator"></span>
+                                            Online
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="model-dropdown-footer">
+                                <div class="model-dropdown-info">
+                                    Modelos atualizados em tempo real
+                                </div>
+                                <div class="model-dropdown-actions">
+                                    <button class="model-dropdown-btn" id="refreshModelsBtn">
+                                        <i class="fas fa-sync-alt"></i> Atualizar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="message ai-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        <p>Olá! Como posso ajudar você hoje?</p>
+                        <div class="message-actions">
+                            <button class="action-btn" title="Copiar">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn" title="Regerarar">
+                                <i class="fas fa-refresh"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-actions">
+                    <button class="input-btn" id="attachFileBtn" title="Anexar arquivo">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-btn" title="Gravar áudio">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <input type="file" id="fileInput" accept="*/*" style="display: none;">
+                </div>
+                <textarea class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." rows="1"></textarea>
+                <button class="send-btn" id="sendBtn" title="Enviar mensagem">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button class="pause-btn" id="pauseBtn" title="Pausar" style="display: none;">
+                    <i class="fas fa-pause"></i>
+                </button>
+            </div>
+        </main>
+
+        <!-- Coluna Direita - Lista de Agentes -->
+        <aside class="sidebar sidebar-right" id="sidebarRight">
+            <div class="sidebar-header">
+                <h2>Agentes</h2>
+                <button class="collapse-btn" id="collapseRight" title="Recolher">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="agents-container">
+                <button class="create-agent-btn" id="createAgentBtn">
+                    <i class="fas fa-plus"></i>
+                    Criar Novo Agente
+                </button>
+                <div class="agents-list" id="agentsList">
+                    <div class="agent-category">
+                        <div class="category-header" data-category="marketing">
+                            <i class="fas fa-chevron-down"></i>
+                            <span>Marketing</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="agent-item" data-agent-id="1">
+                                <div class="agent-avatar">
+                                    <i class="fas fa-bullhorn"></i>
+                                </div>
+                                <div class="agent-info">
+                                    <h4>Especialista em Marketing</h4>
+                                    <span>Conteúdo e estratégias</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="agent-category">
+                        <div class="category-header" data-category="desenvolvimento">
+                            <i class="fas fa-chevron-down"></i>
+                            <span>Desenvolvimento</span>
+                        </div>
+                        <div class="category-items">
+                            <div class="agent-item" data-agent-id="2">
+                                <div class="agent-avatar">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="agent-info">
+                                    <h4>Programador Sênior</h4>
+                                    <span>Código e arquitetura</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="agent-item" data-agent-id="3">
+                        <div class="agent-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="agent-info">
+                            <h4>Assistente Geral</h4>
+                            <span>Ajuda com diversas tarefas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal de Criação/Edição de Agente -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="agentModal">
+            <div class="modal-header">
+                <h3>Criar Novo Agente</h3>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="agentName">Nome do Agente</label>
+                    <input type="text" id="agentName" placeholder="Digite o nome do agente">
+                </div>
+                <div class="form-group">
+                    <label for="agentCategory">Categoria</label>
+                    <input type="text" id="agentCategory" placeholder="Digite a categoria">
+                </div>
+                <div class="form-group">
+                    <label for="agentInstruction">Instrução do Sistema</label>
+                    <textarea id="agentInstruction" placeholder="Defina a personalidade e diretrizes do agente..." rows="6"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Avatar</label>
+                    <div class="avatar-selection">
+                        <div class="avatar-option selected" data-avatar="fa-robot">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="avatar-option" data-avatar="fa-user">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="avatar-option" data-avatar="fa-user-tie">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div class="avatar-option" data-avatar="fa-graduation-cap">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="avatar-option" data-avatar="fa-lightbulb">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="avatar-option" data-avatar="fa-heart">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveAgentBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Moderno de Seleção de Agente -->
+    <div class="agent-selector-modal" id="agentSelectorModal">
+        <div class="modal-container">
+            <div class="modal-phase phase-1" id="phase1">
+                <div class="phase-content">
+                    <div class="phase-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h2>Ótimo, vamos mudar a linha de pensamento!</h2>
+                    <p>Escolha um novo agente para continuar nossa conversa</p>
+                    <button class="continue-btn" id="continueToAgents">
+                        Continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="modal-phase phase-2" id="phase2">
+                <div class="phase-header">
+                    <button class="back-btn" id="backToPhase1">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h3>Escolha um agente</h3>
+                </div>
+                <div class="agents-filters">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="agentSearch" placeholder="Pesquisar agente...">
+                    </div>
+                    <select class="category-filter" id="categoryFilter">
+                        <option value="">Todas as categorias</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="desenvolvimento">Desenvolvimento</option>
+                    </select>
+                </div>
+                <div class="agents-list-container" id="agentsListContainer">
+                    <!-- Agentes serão inseridos dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para fechar dropdown de modelo -->
+    <div class="model-dropdown-overlay" id="modelDropdownOverlay"></div>
+
+    <!-- Modal de Edição de Conversa -->
+    <div class="modal-overlay" id="editChatModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-pencil"></i>
+                    Editar Conversa
+                </h3>
+                <button class="close-btn" id="closeEditModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editChatTitle">Nome da Conversa</label>
+                    <input type="text" id="editChatTitle" placeholder="Digite o novo nome da conversa..." maxlength="50">
+                    <small style="color: var(--text-secondary); font-size: 12px; margin-top: 4px; display: block;">
+                        <span id="titleCharCount">0</span>/50 caracteres
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveChatTitleBtn">
+                    <i class="fas fa-save"></i>
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal-overlay" id="deleteChatModal">
+        <div class="modal modal-danger">
+            <div class="modal-header">
+                <h3>
+                    <i class="fas fa-exclamation-triangle" style="color: #f44336;"></i>
+                    Confirmar Exclusão
+                </h3>
+                <button class="close-btn" id="closeDeleteModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="width: 64px; height: 64px; background: #ffebee; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                        <i class="fas fa-trash" style="font-size: 24px; color: #f44336;"></i>
+                    </div>
+                    <p style="font-size: 16px; color: var(--text-primary); margin-bottom: 8px;">
+                        Tem certeza que deseja excluir esta conversa?
+                    </p>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">
+                        <strong id="deleteChatTitle"></strong>
+                    </p>
+                    <p style="font-size: 13px; color: var(--text-tertiary); font-style: italic;">
+                        Esta ação não poderá ser desfeita. Todas as mensagens serão perdidas permanentemente.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancelar</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i>
+                    Excluir Conversa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para troca de agente (legado - será removido) -->
+    <div class="agent-switch-overlay" id="agentSwitchOverlay" style="display: none;">
+        <div class="switch-message">
+            <i class="fas fa-exchange-alt"></i>
+            <p>Selecione um novo agente na lista para continuar esta conversa</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
