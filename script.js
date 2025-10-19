@@ -72,8 +72,29 @@ class ChatApp {
     
     // ===== CONFIGURAÇÃO DE EVENTOS =====
     setupEventListeners() {
+        // Mobile menu button
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => this.toggleMobileSidebar());
+        
+        // Mobile agents button
+        document.getElementById('mobileAgentsBtn').addEventListener('click', () => this.toggleMobileAgentsDropdown());
+        
+        // Close mobile agents
+        document.getElementById('closeMobileAgents').addEventListener('click', () => this.closeMobileAgentsDropdown());
+        
+        // Mobile overlay
+        document.getElementById('mobileOverlay').addEventListener('click', () => {
+            this.closeMobileSidebar();
+            this.closeMobileAgentsDropdown();
+        });
+        
+        // Create agent button mobile
+        document.getElementById('createAgentBtnMobile').addEventListener('click', () => {
+            this.closeMobileAgentsDropdown();
+            this.openAgentModal();
+        });
+        
         // Collapse sidebars
-        document.getElementById('collapseLeft').addEventListener('click', () => this.toggleSidebar('left'));
+        document.getElementById('collapseLeft').addEventListener('click', () => this.handleLeftCollapseButton());
         document.getElementById('collapseRight').addEventListener('click', () => this.toggleSidebar('right'));
         
         // Theme toggle
@@ -232,6 +253,117 @@ class ChatApp {
         });
     }
     
+    // ===== FUNCIONALIDADES MOBILE =====
+    toggleMobileSidebar() {
+        const sidebar = document.getElementById('sidebarLeft');
+        const overlay = document.getElementById('mobileOverlay');
+        const isOpen = sidebar.classList.contains('mobile-open');
+        
+        if (isOpen) {
+            this.closeMobileSidebar();
+        } else {
+            this.openMobileSidebar();
+        }
+    }
+    
+    openMobileSidebar() {
+        const sidebar = document.getElementById('sidebarLeft');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('active');
+        
+        // Prevenir scroll no body
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closeMobileSidebar() {
+        const sidebar = document.getElementById('sidebarLeft');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        
+        // Restaurar scroll no body
+        document.body.style.overflow = '';
+    }
+    
+    toggleMobileAgentsDropdown() {
+        const dropdown = document.getElementById('mobileAgentsDropdown');
+        const isOpen = dropdown.classList.contains('active');
+        
+        if (isOpen) {
+            this.closeMobileAgentsDropdown();
+        } else {
+            this.openMobileAgentsDropdown();
+        }
+    }
+    
+    openMobileAgentsDropdown() {
+        const dropdown = document.getElementById('mobileAgentsDropdown');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        // Duplicar agentes da sidebar para o dropdown mobile
+        this.populateMobileAgents();
+        
+        dropdown.classList.add('active');
+        overlay.classList.add('active');
+        
+        // Prevenir scroll no body
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closeMobileAgentsDropdown() {
+        const dropdown = document.getElementById('mobileAgentsDropdown');
+        const overlay = document.getElementById('mobileOverlay');
+        
+        dropdown.classList.remove('active');
+        overlay.classList.remove('active');
+        
+        // Restaurar scroll no body
+        document.body.style.overflow = '';
+    }
+    
+    populateMobileAgents() {
+        const mobileAgentsList = document.getElementById('agentsListMobile');
+        const desktopAgentsList = document.getElementById('agentsList');
+        
+        // Limpar lista mobile
+        mobileAgentsList.innerHTML = '';
+        
+        // Clonar agentes da sidebar desktop
+        const agents = desktopAgentsList.cloneNode(true);
+        agents.id = 'agentsListMobile';
+        agents.className = 'agents-list mobile';
+        
+        // Adicionar event listeners para os agentes clonados
+        agents.querySelectorAll('.agent-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const agentId = parseInt(item.dataset.agentId);
+                const agent = this.agents.get(agentId);
+                
+                if (agent) {
+                    this.currentAgent = agent;
+                    this.updateChatHeader();
+                    this.closeMobileAgentsDropdown();
+                    this.showNotification(`Agente trocado para ${agent.name}`, 'info');
+                    
+                    // Iniciar nova conversa com o agente selecionado
+                    this.createNewChat(agent);
+                }
+            });
+        });
+        
+        // Adicionar event listeners para as categorias
+        agents.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                this.toggleCategory(header);
+            });
+        });
+        
+        mobileAgentsList.appendChild(agents);
+    }
+    
     // ===== FUNCIONALIDADES DE TEMA =====
     setupTheme() {
         const savedTheme = localStorage.getItem('theme') || 'light';
@@ -253,6 +385,17 @@ class ChatApp {
     }
     
     // ===== FUNCIONALIDADES DE SIDEBAR =====
+    handleLeftCollapseButton() {
+        // Verificar se estamos em mobile
+        if (window.innerWidth <= 768) {
+            // Em mobile, fechar a sidebar completamente
+            this.closeMobileSidebar();
+        } else {
+            // Em desktop, comportamento normal de recolher
+            this.toggleSidebar('left');
+        }
+    }
+    
     toggleSidebar(side) {
         const container = document.querySelector('.app-container');
         const sidebar = side === 'left' ? 

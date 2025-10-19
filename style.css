@@ -137,10 +137,23 @@ body {
   margin: 0;
 }
 
-.sidebar.collapsed .sidebar-actions {
-  flex-direction: column;
-  gap: 12px;
-}
+  .sidebar.collapsed .sidebar-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Em mobile, o botão de recolher da sidebar esquerda deve ser um X para fechar */
+  @media (max-width: 768px) {
+    .sidebar-left .collapse-btn i {
+      font-size: 18px;
+    }
+    
+    .sidebar-left .collapse-btn i::before {
+      content: '\f00d'; /* X icon */
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+    }
+  }
 
 /* Botão de nova conversa na sidebar recolhida */
 .sidebar-left.collapsed::after {
@@ -500,7 +513,7 @@ body {
 .chat-actions {
   display: flex;
   gap: 4px;
-  opacity: 0;
+  opacity: 1;
   transition: opacity var(--transition-fast);
   position: relative;
   z-index: 10;
@@ -1338,7 +1351,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transition: all var(--transition-normal);
-  z-index: 1000;
+  z-index: 1003;
   backdrop-filter: blur(4px);
 }
 
@@ -2214,22 +2227,188 @@ body {
   background: var(--text-tertiary);
 }
 
+/* ===== HEADER MOBILE ===== */
+.mobile-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1001;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobile-header-left,
+.mobile-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-menu-btn,
+.mobile-agents-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+}
+
+.mobile-menu-btn:hover,
+.mobile-agents-btn:hover {
+  background-color: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+.mobile-agents-btn {
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+  background-color: var(--accent-primary);
+  color: white;
+}
+
+.mobile-agents-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.mobile-app-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* ===== DROPDOWN MOBILE DE AGENTES ===== */
+.mobile-agents-dropdown {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-primary);
+  z-index: 1000;
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  overflow-y: auto;
+}
+
+.mobile-agents-dropdown.active {
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-agents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  background-color: var(--bg-secondary);
+}
+
+.mobile-agents-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.close-mobile-agents {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.close-mobile-agents:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.mobile-agents-content {
+  padding: 16px;
+}
+
+/* Overlay para mobile */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-fast);
+}
+
+.mobile-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* ===== RESPONSIVO ===== */
 @media (max-width: 768px) {
-  .app-container {
-    grid-template-columns: 1fr;
+  /* Header mobile */
+  .mobile-header {
+    display: flex;
   }
   
+  .mobile-overlay {
+    display: block;
+  }
+  
+  /* Ajustar container principal */
+  .app-container {
+    grid-template-columns: 1fr;
+    padding-top: 60px;
+    height: calc(100vh - 60px);
+  }
+  
+  /* Sidebars */
   .sidebar {
     position: fixed;
-    top: 0;
+    top: 60px;
     bottom: 0;
-    z-index: 100;
+    z-index: 1002;
+    width: 280px;
     transform: translateX(-100%);
+    transition: transform var(--transition-normal);
   }
   
   .sidebar-right {
     right: 0;
+    left: auto;
     transform: translateX(100%);
   }
   
@@ -2237,9 +2416,295 @@ body {
     transform: translateX(0);
   }
   
+  /* Esconder sidebar direita em mobile (vira dropdown) */
+  .sidebar-right {
+    display: none;
+  }
+  
+  /* Chat area */
+  .chat-area {
+    width: 100%;
+  }
+  
+  .chat-header {
+    padding: 16px 20px;
+  }
+  
+  .agent-info {
+    gap: 12px;
+  }
+  
+  .agent-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .agent-details h3 {
+    font-size: 16px;
+  }
+  
+  .model-selector {
+    min-width: 140px;
+    font-size: 13px;
+  }
+  
+  /* Messages */
+  .messages-container {
+    padding: 16px;
+  }
+  
   .message {
     max-width: 90%;
   }
+  
+  .message-content {
+    padding: 10px 14px;
+  }
+  
+  .message-content p {
+    font-size: 14px;
+  }
+  
+  /* Input */
+  .chat-input-container {
+    padding: 16px 20px;
+    gap: 8px;
+  }
+  
+  .input-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .chat-input {
+    font-size: 14px;
+    min-height: 40px;
+    max-height: 100px;
+  }
+  
+  .send-btn, .pause-btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  /* Modais */
+  .modal {
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Model dropdown */
+  .model-dropdown {
+    right: -20px;
+    min-width: 280px;
+    max-width: calc(100vw - 40px);
+  }
+  
+  /* Agent selector modal */
+  .modal-container {
+    width: 95%;
+    height: 80vh;
+    margin: 10px;
+  }
+  
+  .phase-header {
+    padding: 16px 20px;
+  }
+  
+  .agents-filters {
+    padding: 12px 20px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .category-filter {
+    min-width: 100%;
+  }
+  
+  .agents-list-container {
+    padding: 12px 20px;
+  }
+  
+  /* Scrollbar melhor para mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-header {
+    padding: 0 12px;
+    height: 56px;
+  }
+  
+  .app-container {
+    padding-top: 56px;
+    height: calc(100vh - 56px);
+  }
+  
+  .sidebar {
+    top: 56px;
+    width: 100%;
+  }
+  
+  .mobile-agents-dropdown {
+    top: 56px;
+  }
+  
+  .mobile-agents-header {
+    padding: 12px 16px;
+  }
+  
+  .mobile-agents-content {
+    padding: 12px;
+  }
+  
+  .chat-header {
+    padding: 12px 16px;
+  }
+  
+  .messages-container {
+    padding: 12px;
+  }
+  
+  .chat-input-container {
+    padding: 12px 16px;
+  }
+  
+  .mobile-app-title {
+    font-size: 16px;
+  }
+  
+  .mobile-agents-btn span {
+    display: none;
+  }
+  
+  .mobile-agents-btn {
+    min-width: 40px;
+    padding: 8px;
+  }
+}
+
+/* ===== ESTILOS ADICIONAIS PARA ELEMENTOS MOBILE ===== */
+.agents-list.mobile {
+  padding: 0;
+}
+
+.agents-list.mobile .create-agent-btn {
+  margin-bottom: 16px;
+}
+
+.agents-list.mobile .agent-category {
+  margin-bottom: 12px;
+}
+
+.agents-list.mobile .category-header {
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.agents-list.mobile .category-items {
+  margin-left: 12px;
+}
+
+.agents-list.mobile .agent-item {
+  padding: 10px 12px;
+  margin-bottom: 2px;
+}
+
+.agents-list.mobile .agent-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.agents-list.mobile .agent-avatar i {
+  font-size: 14px;
+}
+
+.agents-list.mobile .agent-info h4 {
+  font-size: 13px;
+}
+
+.agents-list.mobile .agent-info span {
+  font-size: 11px;
+}
+
+/* Ajustes para modais em mobile */
+@media (max-width: 768px) {
+  .modal-overlay.active .modal {
+    animation: modalSlideInMobile 0.3s ease forwards;
+  }
+}
+
+@keyframes modalSlideInMobile {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Melhorias no feedback visual para mobile */
+.mobile-menu-btn:active,
+.mobile-agents-btn:active {
+  transform: scale(0.95);
+}
+
+.mobile-menu-btn,
+.mobile-agents-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-menu-btn::after,
+.mobile-agents-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.mobile-menu-btn:active::after,
+.mobile-agents-btn:active::after {
+  width: 100px;
+  height: 100px;
 }
 
 /* ===== ESTADOS DE FOCO E ACESSIBILIDADE ===== */

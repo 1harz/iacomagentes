@@ -9,6 +9,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header Mobile com Menu Sanduíche e Dropdown de Agentes -->
+    <header class="mobile-header" id="mobileHeader">
+        <div class="mobile-header-left">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="mobile-app-title">IA Chat Agents</h1>
+        </div>
+        <div class="mobile-header-right">
+            <button class="mobile-agents-btn" id="mobileAgentsBtn" title="Agentes">
+                <i class="fas fa-robot"></i>
+                <span>Agentes</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Agents Dropdown -->
+    <div class="mobile-agents-dropdown" id="mobileAgentsDropdown">
+        <div class="mobile-agents-header">
+            <h3>Agentes Disponíveis</h3>
+            <button class="close-mobile-agents" id="closeMobileAgents">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-agents-content">
+            <button class="create-agent-btn mobile" id="createAgentBtnMobile">
+                <i class="fas fa-plus"></i>
+                Criar Novo Agente
+            </button>
+            <div class="agents-list mobile" id="agentsListMobile">
+                <!-- Agentes serão duplicados aqui para mobile -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para mobile -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
     <div class="app-container">
         <!-- Coluna Esquerda - Histórico de Conversas -->
         <aside class="sidebar sidebar-left" id="sidebarLeft">
