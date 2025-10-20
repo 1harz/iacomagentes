@@ -2469,6 +2469,14 @@ body {
   .chat-input-container {
     padding: 16px 20px;
     gap: 8px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-light);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
   
   .input-btn {
@@ -2487,6 +2495,11 @@ body {
     min-width: 40px;
     height: 40px;
     font-size: 14px;
+  }
+  
+  /* Ajustar o container de mensagens para não ficar atrás da barra de input */
+  .messages-container {
+    padding-bottom: 80px;
   }
   
   /* Modais */
